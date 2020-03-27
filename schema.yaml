@@ -1,0 +1,12 @@
+- send:
+    message: Message 1. Send an integer!
+- receive:
+    key: number
+    expect_type: int
+    on_failure: retry
+- send:
+    message: Message 2. Send a string!
+- receive:
+    key: string
+    expect_type: str
+    on_failure: retry

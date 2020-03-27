@@ -3,22 +3,19 @@ import enum
 import collections
 import logging
 
-Actions = enum.Enum('Actions', ['send', 'receive', 'retry'])
+Actions = enum.Enum('Actions', ['send', 'receive', 'retry', 'stop'])
 
 class ResponseModel:
     def __init__(self):
         self.actions = queue.Queue()
 
-
     def send(self, message):
         self.actions.put((Actions.send, message))
         return self
 
-
-    def receive(self, key,  expect_type=str, on_failure=Actions.retry):
+    def receive(self, key, expect_type=str, on_failure=Actions.retry):
         self.actions.put((Actions.receive, key, expect_type, on_failure))
         return self
-
 
     def build(self, uuid, logger=None):
         return UserModel(uuid, self.actions, logger)
@@ -33,12 +30,11 @@ class UserModel:
             logger = logging.getLogger(str(uuid))
         self.logger = logger
 
-
     def get_response(self, message):
         # TODO: add authentication of uuid in this method?
         if self.actions.empty():
             return None
-        action = self.actions.pop()
+        action = self.actions.get()
         if action[0] == Actions.receive:
             try:
                 val = action[2](message)
@@ -55,7 +51,7 @@ class UserModel:
 
 
 class UserModelRepository:
-    def __init__(self, response_model, logger):
+    def __init__(self, response_model, logger=None):
         self.users = {}
         self.logger = logger
         self.response_model = response_model
