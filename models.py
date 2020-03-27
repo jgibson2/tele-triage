@@ -1,20 +1,20 @@
-import queue
 import enum
 import collections
 import logging
 
 Actions = enum.Enum('Actions', ['send', 'receive', 'retry', 'stop'])
+retry_message = "Sorry, we didn't understand that. Try again?"
 
 class ResponseModel:
     def __init__(self):
-        self.actions = queue.Queue()
+        self.actions = collections.deque()
 
     def send(self, message):
-        self.actions.put((Actions.send, message))
+        self.actions.append((Actions.send, message))
         return self
 
     def receive(self, key, expect_type=str, on_failure=Actions.retry):
-        self.actions.put((Actions.receive, key, expect_type, on_failure))
+        self.actions.append((Actions.receive, key, expect_type, on_failure))
         return self
 
     def build(self, uuid, logger=None):
@@ -32,9 +32,10 @@ class UserModel:
 
     def get_response(self, message):
         # TODO: add authentication of uuid in this method?
-        if self.actions.empty():
-            return None
-        action = self.actions.get()
+        try:
+            action = self.actions.popleft()
+        except IndexError:
+            return Actions.stop
         if action[0] == Actions.receive:
             try:
                 val = action[2](message)
@@ -42,8 +43,8 @@ class UserModel:
             except:
                 self.logger.error(f'Could not parse {message} to {action[2]}!')
                 if action[3] == Actions.retry:
-                    self.actions.put(action)
-                    return "Sorry, we didn't understand that. Try again?"
+                    self.actions.appendleft(action)
+                    return retry_message
             return self.get_response(message) # recurse until we get a send
         elif action[0] == Actions.send:
             return action[1]
