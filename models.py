@@ -34,7 +34,7 @@ class UserModel:
         self.logger = logger
 
 
-    def act(self, message):
+    def get_response(self, message):
         # TODO: add authentication of uuid in this method?
         if self.actions.empty():
             return None
@@ -48,9 +48,22 @@ class UserModel:
                 if action[3] == Actions.retry:
                     self.actions.put(action)
                     return "Sorry, we didn't understand that. Try again?"
-            return self.act(message) # recurse until we get a send
+            return self.get_response(message) # recurse until we get a send
         elif action[0] == Actions.send:
             return action[1]
         return None
 
 
+class UserModelRepository:
+    def __init__(self, response_model, logger):
+        self.users = {}
+        self.logger = logger
+        self.response_model = response_model
+
+    def get_or_create(self, uuid):
+        if uuid not in self.users:
+            self.users[uuid] = self.response_model.build(uuid, self.logger)
+        return self.users[uuid]
+
+    def get_response(self, uuid, message):
+        return self.get_or_create(uuid).get_response(message)
