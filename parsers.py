@@ -25,4 +25,6 @@ def response_model_from_yaml(yml):
             resp.conditional(lambda message: eval(obj['conditional']['condition']),
                              response_model_from_yaml(obj['conditional']['response_if_true']),
                              response_model_from_yaml(obj['conditional']['response_if_false']))
+        if 'stop' in obj:
+            resp.build(None)
     return resp

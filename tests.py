@@ -33,12 +33,11 @@ class ParserTests(unittest.TestCase):
             """
         )
         user = model.build('test')
-        self.assertEqual(user.get_response('Help!'), 'Message 1. Send an integer!')
-        self.assertEqual(user.get_response('not a number'), retry_message)
-        self.assertEqual(user.get_response('1'), 'Message 2. Send a string!')
-        self.assertEqual(user.get_response('a string'), 'Hello?')
-        self.assertEqual(user.get_response('hello'), 'You said hello!')
-        self.assertEqual(user.get_response('should retrun stop'), Actions.stop)
+        self.assertEqual(user.get_response('Help!'), ('Message 1. Send an integer!', True))
+        self.assertEqual(user.get_response('not a number'), (retry_message, True))
+        self.assertEqual(user.get_response('1'), ('Message 2. Send a string!', True))
+        self.assertEqual(user.get_response('a string'), ('Hello?', True))
+        self.assertEqual(user.get_response('hello'), ('You said hello!', False))
 
     def test_user_model_repo(self):
         model = response_model_from_yaml_text(
@@ -68,12 +67,11 @@ class ParserTests(unittest.TestCase):
             """
         )
         repo = UserModelRepository(model)
-        self.assertEqual(repo.get_response('test', 'Help!'), 'Message 1. Send an integer!')
-        self.assertEqual(repo.get_response('test', 'not a number'), retry_message)
-        self.assertEqual(repo.get_response('test', '1'), 'Message 2. Send a string!')
-        self.assertEqual(repo.get_response('test', 'a string'), 'Hello?')
-        self.assertEqual(repo.get_response('test', 'hello'), 'You said hello!')
-        self.assertEqual(repo.get_response('test', 'should retrun stop'), Actions.stop)
+        self.assertEqual(repo.get_response('test', 'Help!'), ('Message 1. Send an integer!', True))
+        self.assertEqual(repo.get_response('test', 'not a number'), (retry_message, True))
+        self.assertEqual(repo.get_response('test', '1'), ('Message 2. Send a string!', True))
+        self.assertEqual(repo.get_response('test', 'a string'), ('Hello?', True))
+        self.assertEqual(repo.get_response('test', 'hello'), ('You said hello!', False))
 
 
 class QueryTests(unittest.TestCase):

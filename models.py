@@ -22,7 +22,8 @@ class ResponseModel:
         return self
 
     def build(self, uuid, logger=None):
-        return UserModel(uuid, self.actions, logger)
+        self.actions.append((Actions.stop,))
+        return UserModel(uuid, self.actions, logger) if uuid is not None else None
 
 
 class UserModel:
@@ -34,8 +35,10 @@ class UserModel:
             logger = logging.getLogger(str(uuid))
         self.logger = logger
 
+    """
+    Returns the response to give, and whether to continue or not
+    """
     def get_response(self, message):
-        # TODO: add authentication of uuid in this method?
         try:
             action = self.actions.popleft()
         except IndexError:
@@ -48,10 +51,15 @@ class UserModel:
                 self.logger.error(f'Could not parse {message} to {action[2]}!')
                 if action[3] == Actions.retry:
                     self.actions.appendleft(action)
-                    return retry_message
+                    return (retry_message, True)
             return self.get_response(message) # recurse until we get a send
         elif action[0] == Actions.send:
-            return action[1]
+            do_continue = False
+            try:
+                do_continue = self.actions[0][0] is not Actions.stop
+            except IndexError:
+                pass
+            return (action[1], do_continue)
         elif action[0] == Actions.condition:
             cond = action[1](message) #unsafe, so use wisely!
             if(cond):
@@ -59,7 +67,7 @@ class UserModel:
             else:
                 self.actions.extendleft(action[3].actions)
             return self.get_response(message)
-        return None
+        return self.get_response(message)
 
 
 class UserModelRepository:
@@ -72,6 +80,10 @@ class UserModelRepository:
         if uuid not in self.users:
             self.users[uuid] = self.response_model.build(uuid, self.logger)
         return self.users[uuid]
+
+    def delete(self, uuid):
+        if uuid in self.users:
+            del self.users[uuid]
 
     def get_response(self, uuid, message):
         return self.get_or_create(uuid).get_response(message)
