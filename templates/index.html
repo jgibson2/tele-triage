@@ -9,7 +9,7 @@
     {% for key,val in values.items()%}
         <p>{{key}}: {{val}}</p>
     {% endfor %}
-    <form action = "http://localhost:5001/verdict", method="POST">
+    <form action = "./verdict", method="POST">
         <input type="radio" name="triages" id="home" value="home"/><label for="home">stay the fuck home</label>
         <input type="radio" name="triages" id="er" value="er"/><label for="er">get the fuck over to the er</label>
         <input type="radio" name="triages" id="requeue" value="requeue"/><label for="requeue">let someone else handle this fucker</label>

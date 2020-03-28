@@ -88,7 +88,7 @@ def verdict():
         work_available.release()
         user_model_repo.delete(user_number)
 
-    return redirect(url_for('home'))
+    return render_template('verdict.html')
 
 
 def get_triage_instructions(triage_code):
