@@ -66,7 +66,7 @@ def verdict():
     session['user_uuid'] = None
     session['user_vals'] = None
     user_model_repo.delete(user_number)
-    return redirect(url_for('home'))
+    return render_template('verdict.html')
 
 if __name__ == '__main__':
     application.run(host='127.0.0.1', port=5001, debug=True)
