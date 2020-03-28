@@ -1,4 +1,4 @@
-import models, logging, yaml, enum, parsers, collections
+import models, logging, yaml, enum, parsers, collections, threading, time, triage, matching.match_users
 from flask import Flask, make_response, render_template, redirect, url_for, request, session
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
@@ -8,6 +8,10 @@ application.config.from_object(__name__)
 
 user_model_repo = models.UserModelRepository(parsers.response_model_from_yaml_file('schema.yaml'), logging.getLogger(str(__name__)))
 user_queue = collections.deque()
+to_respond_queue = collections.deque()
+lock = threading.RLock()
+work_available = threading.Condition(lock)
+
 
 credentials = yaml.load(open('./credentials.yml'))
 twilio_acct_sid = credentials['twilio']['acct_sid']
@@ -17,9 +21,14 @@ twilio_service_sid = credentials['twilio']['msg_service_sid']
 
 application.secret_key = credentials['flask']['secret_key']
 
+zip_code_api_key = credentials['zipcodeapi']['api_key']
+zip_code_radius = int(credentials['zipcodeapi']['radius'])
+
+
 client = Client(twilio_acct_sid, twilio_token)
 
-Triages = enum.Enum('Triages', ['requeue'])
+# Not needed?
+# Triages = enum.Enum('Triages', ['requeue'])
 
 @application.route('/')
 def home():
@@ -34,10 +43,14 @@ def home():
         # todo: continuously check every few seconds
         return 'no users'
 
+
 @application.route('/sms', methods=['POST'])
 def sms():
     phone_number = request.values.get('From', None)
     message_body = request.values.get('Body', None)
+
+    if message_body == 'RESTART':
+        user_model_repo.delete(phone_number)
 
     resp = MessagingResponse()
     
@@ -49,24 +62,82 @@ def sms():
         user_queue.append(user_model_repo.users[phone_number])
     return str(resp)
 
+
 @application.route('/verdict', methods=['POST'])
 def verdict():
-    triage_code = request.values.get('triages', None)
-    user_number = request.values.get('phonenumber', None)
-    triage_instructions = ""
-    if triage_code == 'home':
-        triage_instructions = "Stay at home, rest, and take medication as necessary"
-    elif triage_code == 'er':
-        triage_instructions = "Go to the ER ASAP"
-    else:
-        triage_instructions = "You have been placed back in the queue, and will be connected to a different doctor"
-        # todo: fix edge case of 'awkward rematching' 
-        user_queue.appendleft(user_model_repo.users[user_number])
-    client.messages.create(from_=twilio_number, body=triage_instructions, to=user_number)
     session['user_uuid'] = None
     session['user_vals'] = None
-    user_model_repo.delete(user_number)
+
+    triage_code = request.values.get('triages', None)
+    user_number = request.values.get('phonenumber', None)
+    # TODO: make these messages easier to customize
+
+    triage_instructions, get_hospital_location = get_triage_instructions(triage_code)
+    if triage_instructions is None:
+        # todo: fix edge case of 'awkward rematching'
+        user_queue.appendleft(user_model_repo.users[user_number])
+    else:
+        user = user_model_repo.get_or_create(user_number)
+        user.values['phone_number'] = user_number
+        user.values['triage_code'] = triage_code
+        user.values['triage_instructions'] = triage_instructions
+        user.values['get_hospital'] = get_hospital_location
+        work_available.acquire()
+        to_respond_queue.append(user)
+        work_available.notify()
+        work_available.release()
+        user_model_repo.delete(user_number)
+
     return redirect(url_for('home'))
 
+
+def get_triage_instructions(triage_code):
+    if triage_code == 'home':
+        triage_instructions = "Stay at home, rest, and take medication as necessary"
+        return triage_instructions, False
+    elif triage_code == 'er':
+        triage_instructions = "Go to the ER ASAP"
+        return triage_instructions, True
+    else:
+        return None, None
+
+
+def create_api_query_worker_thread():
+    def do_work():
+        while True:
+            try:
+                work_available.acquire()
+                user = to_respond_queue.popleft()
+                work_available.release()
+                while True:  # perform API calls (may fail)
+                    try:
+                        instructions = user.values['triage_instructions']
+                        if user.values['get_hospital']:
+                            user_zip_code = user.values['zip_code']
+                            all_zip_codes = triage.get_zip_codes_in_radius(user_zip_code, 50, zip_code_api_key)
+                            hospitals = triage.get_hospital_records_in_zip_codes(all_zip_codes)
+                            weights = matching.match_users.get_match_weights(user_zip_code, user.values['triage_code'],
+                                                                             hospitals)
+                            selected_hospital = triage.make_hospital_choice(hospitals, weights)
+                            instructions += f'\n\n You have been directed to:\n ' + \
+                                            f'{selected_hospital["attributes"]["NAME"]} \n ' + \
+                                            f'{selected_hospital["attributes"]["ADDRESS"]} \n ' + \
+                                            f'{selected_hospital["attributes"]["CITY"]}, ' + \
+                                            f'{selected_hospital["attributes"]["STATE"]}  ' + \
+                                            f'{selected_hospital["attributes"]["ZIP"]}'
+
+                        client.messages.create(from_=twilio_number, body=instructions, to=user.values['phone_number'])
+                        break
+                    except ValueError:
+                        time.sleep(1)  # sleep for one second before trying again
+            except:
+                work_available.wait()
+    return threading.Thread(target=do_work)
+
+
+
 if __name__ == '__main__':
+    api_threads = [create_api_query_worker_thread() for i in range(2)]
+    for thr in api_threads:
+        thr.start()
     application.run(host='127.0.0.1', port=5001, debug=True)

@@ -20,7 +20,7 @@ def transform_trauma(trauma):
 
 
 def convert_json_to_df(data):
-    data = data['features']
+    # data = data['features'] # I already extract the features
     data = json_normalize(data)
 
     df = pd.DataFrame(data)

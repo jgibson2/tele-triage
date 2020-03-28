@@ -14,13 +14,12 @@ from extra_functions import convert_json_to_df
 
 
 
-def get_matches(user_zipcode, assignment, selected_hospitals):
+def get_match_weights(user_zipcode, assignment, selected_hospitals):
     df = convert_json_to_df(selected_hospitals)
     round_robin_results = round_robin(user_zipcode, assignment, df)
 
     res = list(round_robin_results['WEIGHTED_MATCH'])
 
-    
     return res
 
 
