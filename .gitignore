@@ -1,1 +1,3 @@
 venv/
+ngrok.exe
+credentials.yml
