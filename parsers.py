@@ -8,7 +8,7 @@ import sys
 def response_model_from_yaml_file(filename):
     with open(filename, 'r') as f:
         text = f.read()
-        return response_model_from_yaml(text)
+        return response_model_from_yaml_text(text)
 
 def response_model_from_yaml_text(text):
     schema = yaml.safe_load(text)
