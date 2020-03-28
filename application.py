@@ -133,7 +133,7 @@ def create_api_query_worker_thread():
             except:
                 work_available.wait()
 
-    return threading.Thread(target=do_work)
+    return threading.Thread(target=do_work, daemon=True)
 
 
 
