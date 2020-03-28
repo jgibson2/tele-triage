@@ -1,0 +1,6 @@
+requests
+numpy
+flask
+pandas
+pyyaml
+twilio
