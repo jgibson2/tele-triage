@@ -1,5 +1,8 @@
 import yaml
 from models import ResponseModel, Actions
+# must import all builtins to give reflection access
+# this holds for any classes used in the schema!
+from builtins import *
 import sys
 
 def response_model_from_yaml_file(filename):
@@ -17,7 +20,7 @@ def response_model_from_yaml(yml):
         if 'send' in obj:
             resp.send(obj['send']['message'])
         if 'receive' in obj:
-            resp.receive(obj['receive']['key'], getattr(sys.modules['builtins'], obj['receive']['expect_type']), getattr(Actions, obj['receive']['on_failure']))
+            resp.receive(obj['receive']['key'], getattr(sys.modules[__name__], obj['receive']['expect_type']), getattr(Actions, obj['receive']['on_failure']))
         if 'conditional' in obj:
             resp.conditional(lambda message: eval(obj['conditional']['condition']),
                              response_model_from_yaml(obj['conditional']['response_if_true']),
