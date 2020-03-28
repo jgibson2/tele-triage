@@ -1,6 +1,7 @@
 import unittest
 from parsers import *
 from models import *
+from triage import *
 
 
 class ParserTests(unittest.TestCase):
@@ -26,6 +27,13 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(user.get_response('not a number'), retry_message)
         self.assertEqual(user.get_response('1'), 'Message 2. Send a string!')
         self.assertEqual(user.get_response('a string'), Actions.stop)
+
+
+class QueryTests(unittest.TestCase):
+    def test_get_hospital_info(self):
+        data = get_hospital_records_in_zip_codes(['92866', '92680'])
+        self.assertTrue(len(data) > 0)
+        self.assertIsNotNone(make_hospital_choice(data))
 
 
 if __name__ == '__main__':
