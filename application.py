@@ -13,7 +13,7 @@ lock = threading.RLock()
 work_available = threading.Condition(lock)
 
 
-credentials = yaml.load(open('./credentials.yml'))
+credentials = yaml.safe_load(open('./credentials.yml'))
 twilio_acct_sid = credentials['twilio']['acct_sid']
 twilio_token = credentials['twilio']['token']
 twilio_number = credentials['twilio']['number']
@@ -114,7 +114,7 @@ def create_api_query_worker_thread():
                         instructions = user.values['triage_instructions']
                         if user.values['get_hospital']:
                             user_zip_code = user.values['zip_code']
-                            all_zip_codes = triage.get_zip_codes_in_radius(user_zip_code, 50, zip_code_api_key)
+                            all_zip_codes = triage.get_zip_codes_in_radius(user_zip_code, zip_code_radius, zip_code_api_key)
                             hospitals = triage.get_hospital_records_in_zip_codes(all_zip_codes)
                             weights = matching.match_users.get_match_weights(user_zip_code, user.values['triage_code'],
                                                                              hospitals)
@@ -132,6 +132,7 @@ def create_api_query_worker_thread():
                         time.sleep(1)  # sleep for one second before trying again
             except:
                 work_available.wait()
+
     return threading.Thread(target=do_work)
 
 

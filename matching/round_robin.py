@@ -3,9 +3,8 @@ import requests
 import pandas as pd
 import numpy as np
 import re
-from extra_functions import transform_trauma
+from matching.extra_functions import transform_trauma
 import pandas as pd
-from sklearn import preprocessing
 import json
 import pprint
 
