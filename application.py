@@ -2,6 +2,8 @@ import models, logging, yaml, enum, parsers, collections, threading, time, triag
 from flask import Flask, make_response, render_template, redirect, url_for, request, session
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
+from waitress import serve
+
 
 application = Flask(__name__)
 application.config.from_object(__name__)
@@ -141,4 +143,7 @@ if __name__ == '__main__':
     api_threads = [create_api_query_worker_thread() for i in range(2)]
     for thr in api_threads:
         thr.start()
-    application.run(host='127.0.0.1', port=5001, debug=True)
+    if credentials['flask']['debug'] == True:
+        application.run( host=credentials['flask']['host'], port=int(credentials['flask']['port']), debug=True)
+    else:
+        serve(application, host=credentials['flask']['host'], port=int(credentials['flask']['port']))

@@ -4,3 +4,4 @@ flask
 pandas
 pyyaml
 twilio
+waitress
