@@ -2,7 +2,7 @@ import enum
 import collections
 import logging
 
-Actions = enum.Enum('Actions', ['send', 'receive', 'retry', 'stop'])
+Actions = enum.Enum('Actions', ['send', 'receive', 'condition', 'retry', 'stop'])
 retry_message = "Sorry, we didn't understand that. Try again?"
 
 class ResponseModel:
@@ -15,6 +15,10 @@ class ResponseModel:
 
     def receive(self, key, expect_type=str, on_failure=Actions.retry):
         self.actions.append((Actions.receive, key, expect_type, on_failure))
+        return self
+
+    def conditional(self, condition, response_model_if_true, response_model_if_false):
+        self.actions.append((Actions.condition, condition, response_model_if_true, response_model_if_false))
         return self
 
     def build(self, uuid, logger=None):
@@ -48,6 +52,13 @@ class UserModel:
             return self.get_response(message) # recurse until we get a send
         elif action[0] == Actions.send:
             return action[1]
+        elif action[0] == Actions.condition:
+            cond = action[1](message) #unsafe, so use wisely!
+            if(cond):
+                self.actions.extendleft(action[2].actions)
+            else:
+                self.actions.extendleft(action[3].actions)
+            return self.get_response(message)
         return None
 
 

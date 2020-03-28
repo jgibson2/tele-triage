@@ -10,3 +10,13 @@
     key: string
     expect_type: str
     on_failure: retry
+- send:
+    message: Hello?
+- conditional:
+    condition: message == 'hello'
+    response_if_true:
+        - send:
+            message: You said hello!
+    response_if_false:
+        - send:
+              message: You did not say hello :(

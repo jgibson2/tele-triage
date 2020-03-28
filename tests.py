@@ -6,7 +6,7 @@ from triage import *
 
 class ParserTests(unittest.TestCase):
     def test_parse(self):
-        model = response_model_from_yaml(
+        model = response_model_from_yaml_text(
             """
             - send:
                 message: Message 1. Send an integer!
@@ -20,13 +20,25 @@ class ParserTests(unittest.TestCase):
                 key: string
                 expect_type: str
                 on_failure: retry
+            - send:
+                message: Hello?
+            - conditional:
+                condition: message == 'hello'
+                response_if_true:
+                    - send:
+                        message: You said hello!
+                response_if_false:
+                    - send:
+                          message: You did not say hello :(
             """
         )
         user = model.build('test')
         self.assertEqual(user.get_response('Help!'), 'Message 1. Send an integer!')
         self.assertEqual(user.get_response('not a number'), retry_message)
         self.assertEqual(user.get_response('1'), 'Message 2. Send a string!')
-        self.assertEqual(user.get_response('a string'), Actions.stop)
+        self.assertEqual(user.get_response('a string'), 'Hello?')
+        self.assertEqual(user.get_response('hello'), 'You said hello!')
+        self.assertEqual(user.get_response('should retrun stop'), Actions.stop)
 
 
 class QueryTests(unittest.TestCase):
