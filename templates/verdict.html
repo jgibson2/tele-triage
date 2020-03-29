@@ -1,13 +1,39 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>tele-triage</title>
+    <title>Sequoia</title>
+	<link rel="stylesheet" type="text/css" href="sequoiastyle.css">
+	<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
 </head>
 <body>
-    <form action = "./">
-        <input type="submit" value="Triage next user"></button>
-    </form>
+	<div id = "header">
+		<a href = "index.html"><img src="sequoia_logo.png" alt="Sequoia Logo" height="75"></a>
+	</div>
+	<div id = "subtitle">
+		<h2><b>S</b>ending <b>E</b>mergency <b>Q</b>ueries <b>U</b>tilizing <b>O</b>nline <b>I</b>nteractive <b>A</b>id</h2>
+	</div>
+	<div id = "instructions">
+		<h3>Left: Review user information | Right: Select appropriate triage location</h3>
+	</div>
+	<div class="row">
+	    <div class="column left">
+	  	<div id="border">
+            <div id="box">
+                <br><br>
+                <h2>User Information Submitted</h2>
+                <br><br><br>
+            </div>
+	    </div>
+    </div>
+	    <div class="column right">
+	    	<h3></h3><br><br><br><br><br><br><br><br><br><br>
+            <form action = "./">
+        		<input type="submit" value="Triage Next User"></button>
+    			</form>
+        </div>
+	</div>
 </body>
 </html>
