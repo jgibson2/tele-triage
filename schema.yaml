@@ -46,7 +46,7 @@
     key: sore_throat
     expect_type: str
     on_failure: retry
--send:
+- send:
     message: Describe any symptoms are you worried about, including severity and time course (this is an open-ended response).
 - receive:
     key: symptoms
