@@ -3,6 +3,7 @@ from flask import Flask, make_response, render_template, redirect, url_for, requ
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 from waitress import serve
+import sys
 
 
 application = Flask(__name__)
@@ -12,7 +13,7 @@ user_model_repo = models.UserModelRepository(parsers.response_model_from_yaml_fi
 user_queue = collections.deque()
 to_respond_queue = collections.deque()
 lock = threading.RLock()
-work_available = threading.Condition(lock)
+work_available_condition = threading.Condition(lock)
 
 
 credentials = yaml.safe_load(open('./credentials.yml'))
@@ -84,10 +85,9 @@ def verdict():
         user.values['triage_code'] = triage_code
         user.values['triage_instructions'] = triage_instructions
         user.values['get_hospital'] = get_hospital_location
-        work_available.acquire()
-        to_respond_queue.append(user)
-        work_available.notify()
-        work_available.release()
+        with work_available_condition:
+            to_respond_queue.append(user)
+            work_available_condition.notify()
         user_model_repo.delete(user_number)
 
     return render_template('verdict.html')
@@ -107,43 +107,64 @@ def get_triage_instructions(triage_code):
 def create_api_query_worker_thread():
     def do_work():
         while True:
-            try:
-                work_available.acquire()
-                user = to_respond_queue.popleft()
-                work_available.release()
-                while True:  # perform API calls (may fail)
-                    try:
-                        instructions = user.values['triage_instructions']
-                        if user.values['get_hospital']:
-                            user_zip_code = user.values['zip_code']
-                            all_zip_codes = triage.get_zip_codes_in_radius(user_zip_code, zip_code_radius, zip_code_api_key)
-                            hospitals = triage.get_hospital_records_in_zip_codes(all_zip_codes)
-                            weights = matching.match_users.get_match_weights(user_zip_code, user.values['triage_code'],
-                                                                             hospitals)
-                            selected_hospital = triage.make_hospital_choice(hospitals, weights)
-                            instructions += f'\n\n You have been directed to:\n ' + \
-                                            f'{selected_hospital["attributes"]["NAME"]} \n ' + \
-                                            f'{selected_hospital["attributes"]["ADDRESS"]} \n ' + \
-                                            f'{selected_hospital["attributes"]["CITY"]}, ' + \
-                                            f'{selected_hospital["attributes"]["STATE"]}  ' + \
-                                            f'{selected_hospital["attributes"]["ZIP"]}'
-
-                        client.messages.create(from_=twilio_number, body=instructions, to=user.values['phone_number'])
-                        break
-                    except ValueError:
-                        time.sleep(1)  # sleep for one second before trying again
-            except:
-                work_available.wait()
+            with work_available_condition:
+                try:
+                    user = to_respond_queue.popleft()
+                    while True:  # perform API calls (may fail)
+                        try:
+                            instructions = user.values['triage_instructions']
+                            if user.values['get_hospital']:
+                                user_zip_code = user.values['zip_code']
+                                all_zip_codes = triage.get_zip_codes_in_radius(user_zip_code, zip_code_radius, zip_code_api_key)
+                                hospitals = triage.get_hospital_records_in_zip_codes(all_zip_codes)
+                                weights = matching.match_users.get_match_weights(user_zip_code, user.values['triage_code'],
+                                                                                 hospitals)
+                                selected_hospitals = triage.make_hospital_choice(hospitals, weights)
+                                instructions += f'\n\nPlease choose one of the following care centers:\n '
+                                for hosp in selected_hospitals:
+                                    instructions += \
+                                                f'{hosp["attributes"]["NAME"]} \n ' + \
+                                                f'{hosp["attributes"]["ADDRESS"]} \n ' + \
+                                                f'{hosp["attributes"]["CITY"]}, ' + \
+                                                f'{hosp["attributes"]["STATE"]}  ' + \
+                                                f'{hosp["attributes"]["ZIP"]}\n\n'
+                            client.messages.create(from_=twilio_number, body=instructions, to=user.values['phone_number'])
+                            break
+                        except ValueError as ve:
+                            print('Error: {}'.format(ve), file=sys.stderr)
+                            time.sleep(1)  # sleep for one second before trying again
+                        except KeyError as ke:
+                            print('Value not found: {}'.format(ke.with_traceback()), file=sys.stderr)
+                            break
+                except:
+                    work_available_condition.wait()
 
     return threading.Thread(target=do_work, daemon=True)
 
 
 
 if __name__ == '__main__':
-    api_threads = [create_api_query_worker_thread() for i in range(2)]
+    api_threads = [create_api_query_worker_thread() for i in range(1)]
     for thr in api_threads:
         thr.start()
-    if credentials['flask']['debug'] == True:
-        application.run( host=credentials['flask']['host'], port=int(credentials['flask']['port']), debug=True)
-    else:
-        serve(application, host=credentials['flask']['host'], port=int(credentials['flask']['port']))
+
+    user_number = '+12169731312'
+    triage_code = 'LEVEL 1'
+    triage_instructions = 'Test instructions'
+    get_hospital_location = True
+    user = user_model_repo.get_or_create(user_number)
+    user.values['phone_number'] = user_number
+    user.values['zip_code'] = '44116'
+    user.values['triage_code'] = triage_code
+    user.values['triage_instructions'] = triage_instructions
+    user.values['get_hospital'] = get_hospital_location
+    with work_available_condition:
+        to_respond_queue.append(user)
+        work_available_condition.notify()
+
+    time.sleep(1000)
+
+    # if credentials['flask']['debug'] == True:
+    #     application.run( host=credentials['flask']['host'], port=int(credentials['flask']['port']), debug=True)
+    # else:
+    #     serve(application, host=credentials['flask']['host'], port=int(credentials['flask']['port']))

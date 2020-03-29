@@ -63,20 +63,14 @@ def get_user_lat_long(user_zipcode):
 
 
 def convert_json_to_df(data):
-    data = data['features']
-    data = json_normalize(data)[0:10]
+    # data = data['features'] # already passed
+    data = json_normalize(data)
 
     df = pd.DataFrame(data)
-    df.drop(['type'], axis=1, inplace=True)
 
     cols = list(df.columns)
     cols = [x.split('.')[1] for x in cols]
     df.columns = cols
-
-    df['X'] = df['coordinates'].apply(lambda row: row[0])
-    df['Y'] = df['coordinates'].apply(lambda row: row[1])
-    df.drop(['type', 'coordinates','OBJECTID'], axis=1, inplace=True)
-
 
     return df
 

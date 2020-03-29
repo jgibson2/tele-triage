@@ -8,7 +8,7 @@
     message: What is your temperature today? Answer 0 if you do not have a thermometer.
 - receive:
     key: temperature
-    expect_type: int
+    expect_type: float
     on_failure: retry
 - send:
     message: Did you have or feel like you have had a fever in the last 24 hours? Y/N

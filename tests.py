@@ -2,6 +2,8 @@ import unittest
 from parsers import *
 from models import *
 from triage import *
+from test_assets.test_assets import *
+from matching.match_users import get_match_weights
 
 
 class ParserTests(unittest.TestCase):
@@ -75,11 +77,18 @@ class ParserTests(unittest.TestCase):
 
 
 class QueryTests(unittest.TestCase):
+
     def test_get_hospital_info(self):
-        data = get_hospital_records_in_zip_codes(['92866', '92680'])
+        data = get_hospital_records_in_zip_codes(test_zip_codes)
         self.assertTrue(len(data) > 0)
         self.assertIsNotNone(make_hospital_choice(data))
 
+    def test_hospital_weighting(self):
+        weights = get_match_weights('44116', 'LEVEL 1', test_hospitals)
+        self.assertEqual(len(weights), len(test_hospitals))
+        choices = make_hospital_choice(test_hospitals, weights)
+        self.assertIsNotNone(choices)
+        # print(choices)
 
 if __name__ == '__main__':
     unittest.main()
