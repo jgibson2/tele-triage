@@ -93,9 +93,15 @@ def get_triage_instructions(triage_code):
     if triage_code == 'home':
         triage_instructions = "Stay at home, rest, and take medication as necessary"
         return triage_instructions, False
-    elif triage_code == 'er':
+    elif triage_code == 'triage1' or triage_code == 'triage2' or triage_code == 'triage3' or triage_code == 'triage4':
         triage_instructions = "Go to the ER ASAP"
         return triage_instructions, True
+    elif triage_code == 'gettest':
+        triage_instructions = "You should be tested for COVID-19 at the nearest testing location", False
+        return triage_instructions, False
+    elif triage_code == 'checkinlater':
+        triage_code = "Please stay put and text back in 8 hours"
+        return triage_instructions, False 
     else:
         return None, None
 
