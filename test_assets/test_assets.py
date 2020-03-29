@@ -918,3 +918,51 @@ test_hospitals = [{'attributes': {'OBJECTID': 3758, 'ID': '0016344646', 'NAME': 
                                         'STATE_ID': '1006', 'ALT_NAME': 'NOT AVAILABLE', 'ST_FIPS': '39',
                                         'OWNER': 'NON-PROFIT', 'TTL_STAFF': -999, 'BEDS': 267,
                                         'TRAUMA': 'NOT AVAILABLE', 'HELIPAD': 'Y'}}]
+
+
+test_yaml = """
+- send:
+    message: Welcome to Sequoia! What is your 5-digit ZIP code?
+- receive:
+    key: zip_code
+    expect_type: int
+    on_failure: retry
+- send:
+    message: What is your temperature today? Answer 0 if you do not have a thermometer.
+- receive:
+    key: temperature
+    expect_type: float
+    on_failure: retry
+- send:
+    message: Did you have or feel like you have had a fever in the last 24 hours? Y/N
+- receive:
+    key: fever
+    expect_type: str
+    on_failure: retry
+- send:
+    message: Do you have a new or worsening cough? Y/N
+- receive:
+    key: cough
+    expect_type: str
+    on_failure: retry
+- send:
+    message: Are you having trouble breathing? Y/N
+- receive:
+    key: trouble_breathing
+    expect_type: str
+    on_failure: retry
+- send:
+    message: Do you have new or worsening body aches? Y/N
+- receive:
+    key: body_aches
+    expect_type: str
+    on_failure: retry
+- send:
+    message: Do you have a sore throat, different from your seasonal allergies? Y/N
+- receive:
+    key: sore_throat
+    expect_type: str
+    on_failure: retry
+- send:
+    message: Hang tight, getting an expert opinion...
+"""

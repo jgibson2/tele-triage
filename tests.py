@@ -75,6 +75,20 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(repo.get_response('test', 'a string'), ('Hello?', True))
         self.assertEqual(repo.get_response('test', 'hello'), ('You said hello!', False))
 
+    def test_schema(self):
+        model = response_model_from_yaml_text(test_yaml)
+        user = model.build('test')
+        self.assertEqual(user.get_response('Help!'), ('Welcome to Sequoia! What is your 5-digit ZIP code?', True))
+        self.assertEqual(user.get_response('44116'), ('What is your temperature today? Answer 0 if you do not have a thermometer.', True))
+        self.assertEqual(user.get_response('98.5'), ('Did you have or feel like you have had a fever in the last 24 hours? Y/N', True))
+        self.assertEqual(user.get_response('Yes'), ('Do you have a new or worsening cough? Y/N', True))
+        self.assertEqual(user.get_response('Yes'), ('Are you having trouble breathing? Y/N', True))
+        self.assertEqual(user.get_response('Yes'), ('Do you have new or worsening body aches? Y/N', True))
+        self.assertEqual(user.get_response('Yes'), ('Do you have a sore throat, different from your seasonal allergies? Y/N', True))
+        self.assertEqual(user.get_response('Yes'), ('Hang tight, getting an expert opinion...', False))
+
+
+
 
 class QueryTests(unittest.TestCase):
 

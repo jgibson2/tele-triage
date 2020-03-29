@@ -31,7 +31,7 @@ def test_match_users():
         'beds': 0.5,
         'distance': 0.5,
     }
-    get_matches(user_zipcode, assignment, selected_hospitals, weights)
+    get_match_weights(user_zipcode, assignment, selected_hospitals, weights)
 
     ## Test 2
     user_zipcode = 97035 # Portland, OR
@@ -41,9 +41,9 @@ def test_match_users():
         'distance': 0.7,
     }
 
-    get_matches(user_zipcode, assignment, selected_hospitals, weights)
+    get_match_weights(user_zipcode, assignment, selected_hospitals, weights)
 
     ## Test 3
     user_zipcode = 33125 # Miami, FL
     assignment = ['Level 1','Military']
-    get_matches(user_zipcode, assignment, selected_hospitals)
+    get_match_weights(user_zipcode, assignment, selected_hospitals)

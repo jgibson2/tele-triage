@@ -51,17 +51,12 @@ def home():
 def sms():
     phone_number = request.values.get('From', None)
     message_body = request.values.get('Body', None)
-
     if message_body == 'RESTART':
         user_model_repo.delete(phone_number)
-
     resp = MessagingResponse()
-    
     response, cont = user_model_repo.get_response(phone_number, message_body)
-
-    if cont:
-        resp.message(response)
-    else:
+    resp.message(response)
+    if not cont:
         user_queue.append(user_model_repo.users[phone_number])
     return str(resp)
 
@@ -94,6 +89,7 @@ def verdict():
 
 
 def get_triage_instructions(triage_code):
+    # TODO: mak triage codes conform to levels of care in matching, and expand on these options
     if triage_code == 'home':
         triage_instructions = "Stay at home, rest, and take medication as necessary"
         return triage_instructions, False
