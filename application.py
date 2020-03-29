@@ -24,8 +24,7 @@ twilio_service_sid = credentials['twilio']['msg_service_sid']
 
 application.secret_key = credentials['flask']['secret_key']
 
-zip_code_api_key = credentials['zipcodeapi']['api_key']
-zip_code_radius = int(credentials['zipcodeapi']['radius'])
+zip_code_radius = int(credentials['zipcodeapi']['radius_km'])
 
 
 client = Client(twilio_acct_sid, twilio_token)
@@ -100,7 +99,7 @@ def get_triage_instructions(triage_code):
         triage_instructions = "You should be tested for COVID-19 at the nearest testing location", False
         return triage_instructions, False
     elif triage_code == 'checkinlater':
-        triage_code = "Please stay put and text back in 8 hours"
+        triage_instructions = "Please stay put and text back in 8 hours"
         return triage_instructions, False 
     else:
         return None, None
@@ -117,7 +116,6 @@ def create_api_query_worker_thread():
                             instructions = user.values['triage_instructions']
                             if user.values['get_hospital']:
                                 user_zip_code = user.values['zip_code']
-                                all_zip_codes = triage.get_zip_codes_in_radius(user_zip_code, zip_code_radius, zip_code_api_key)
                                 hospitals = triage.get_hospital_records_in_zip_codes(all_zip_codes)
                                 weights = matching.match_users.get_match_weights(user_zip_code, user.values['triage_code'],
                                                                                  hospitals)
@@ -146,7 +144,7 @@ def create_api_query_worker_thread():
 
 
 if __name__ == '__main__':
-    api_threads = [create_api_query_worker_thread() for i in range(1)]
+    api_threads = [create_api_query_worker_thread() for i in range(2)]
     for thr in api_threads:
         thr.start()
 

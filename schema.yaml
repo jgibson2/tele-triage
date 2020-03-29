@@ -5,6 +5,12 @@
     expect_type: int
     on_failure: retry
 - send:
+    message: What is your gender? Male/Female/Nonbinary
+- receive:
+    key: gender
+    expect_type: str
+    on_failure: retry
+- send:
     message: What is your temperature today? Answer 0 if you do not have a thermometer.
 - receive:
     key: temperature
@@ -38,6 +44,18 @@
     message: Do you have a sore throat, different from your seasonal allergies? Y/N
 - receive:
     key: sore_throat
+    expect_type: str
+    on_failure: retry
+-send:
+    message: Describe any symptoms are you worried about, including severity and time course (this is an open-ended response).
+- receive:
+    key: symptoms
+    expect_type: str
+    on_failure: retry
+- send:
+    message: Please provide any other vitals (e.g. blood pressure, O2 saturation, etc.) that you have equipment to take.
+- receive:
+    key: vitals
     expect_type: str
     on_failure: retry
 - send:
