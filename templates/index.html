@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Sequoia</title>
 	<link rel="stylesheet" type="text/css" href="sequoiastyle.css">
-	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+	<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
 </head>
 <body>
     <div id = "header">
@@ -30,7 +30,7 @@
 	    </div>
     </div>
 	    <div class="column right">
-	  	    <h3>Triage Options</h3>
+	  	    <h2>Triage Options</h2>
             <form action = "./verdict", method="POST">
                 <label class="container">
                     <input type="radio" name="triages" id="home" value="home"/><label for="home">stay the fuck home</label><span class="checkmark"></span><br>
@@ -42,7 +42,7 @@
                     <input type="radio" name="triages" id="requeue" value="requeue"/><label for="requeue">let someone else handle this fucker</label><span class="checkmark"></span><br>
                 </label>
                 <input type="hidden" name="phonenumber" value="{{ phonenumber }}"/>
-                <input type="submit" value="submit">fucking submit</button>
+                <input type="submit" value="Submit"></button>
             </form>
         </div>
 	</div>
