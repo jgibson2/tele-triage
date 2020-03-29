@@ -47,7 +47,10 @@ def make_hospital_choice(hospitals, weights=None, N=3):
     else:
         weights = weights + np.abs(np.minimum(np.min(weights), 0))
     weights = np.array(weights) / np.sum(weights)
-    idxs = np.random.choice(list(range(len(hospitals))), N, p=weights)
+    try:
+        idxs = np.random.choice(list(range(len(hospitals))), N, p=weights, replace=False)
+    except:
+        idxs = list(range(len(hospitals)))
     wh = [(weights[idx], hospitals[idx]) for idx in idxs]
     return [h for w,h in sorted(wh, key=lambda x: x[0])]
 

@@ -148,23 +148,7 @@ if __name__ == '__main__':
     for thr in api_threads:
         thr.start()
 
-    user_number = '+12169731312'
-    triage_code = 'LEVEL 1'
-    triage_instructions = 'Test instructions'
-    get_hospital_location = True
-    user = user_model_repo.get_or_create(user_number)
-    user.values['phone_number'] = user_number
-    user.values['zip_code'] = '44116'
-    user.values['triage_code'] = triage_code
-    user.values['triage_instructions'] = triage_instructions
-    user.values['get_hospital'] = get_hospital_location
-    with work_available_condition:
-        to_respond_queue.append(user)
-        work_available_condition.notify()
-
-    time.sleep(1000)
-
-    # if credentials['flask']['debug'] == True:
-    #     application.run( host=credentials['flask']['host'], port=int(credentials['flask']['port']), debug=True)
-    # else:
-    #     serve(application, host=credentials['flask']['host'], port=int(credentials['flask']['port']))
+    if credentials['flask']['debug'] == True:
+        application.run( host=credentials['flask']['host'], port=int(credentials['flask']['port']), debug=True)
+    else:
+        serve(application, host=credentials['flask']['host'], port=int(credentials['flask']['port']))
