@@ -3,7 +3,7 @@ import collections
 import logging
 
 Actions = enum.Enum('Actions', ['send', 'receive', 'condition', 'retry', 'stop'])
-retry_message = "Sorry, we didn't understand that. Try again?"
+retry_message = "Sorry, we didn't understand {}. Try again?"
 
 class ResponseModel:
     def __init__(self):
@@ -51,7 +51,7 @@ class UserModel:
                 self.logger.error(f'Could not parse {message} to {action[2]}!')
                 if action[3] == Actions.retry:
                     self.actions.appendleft(action)
-                    return (retry_message, True)
+                    return (retry_message.format(message), True)
             return self.get_response(message) # recurse until we get a send
         elif action[0] == Actions.send:
             do_continue = False

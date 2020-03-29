@@ -3,7 +3,7 @@ import numpy as np
 import json
 import re
 import requests
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 
 
 
