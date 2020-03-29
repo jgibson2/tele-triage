@@ -44,7 +44,7 @@ def home():
         return render_template('index.html', values=session['user_vals'], phonenumber=session['user_uuid'])
     else:
         # todo: continuously check every few seconds
-        return 'no users'
+        return render_template('no_users_index.html')
 
 
 @application.route('/sms', methods=['POST'])
