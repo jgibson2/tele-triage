@@ -3,7 +3,6 @@ import numpy as np
 import json
 import re
 import requests
-from pandas import json_normalize
 
 
 
@@ -52,7 +51,7 @@ def get_match_type(assignment, visit_type):
             return 1
     return 0
 
-def get_user_long_lat(user_zipcode):
+def get_user_lat_long(user_zipcode):
     url = 'https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-zip-code-latitude-and-longitude&q={user_zipcode}&facet=state&facet=timezone&facet=dst'.format(user_zipcode=user_zipcode)
     response = requests.get(url)
     
@@ -63,8 +62,7 @@ def get_user_long_lat(user_zipcode):
 
 
 def convert_json_to_df(data):
-    # data = data['features'] # already passed
-    data = json_normalize(data)
+    data = pd.io.json.json_normalize(data)
 
     df = pd.DataFrame(data)
 
@@ -73,4 +71,5 @@ def convert_json_to_df(data):
     df.columns = cols
 
     return df
+
 

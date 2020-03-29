@@ -9,12 +9,18 @@ import pprint
 from matching.util_functions.extra_functions import get_distance
 from matching.util_functions.extra_functions import get_match_trauma
 from matching.util_functions.extra_functions import get_match_type
-from matching.util_functions.extra_functions import get_user_long_lat
+from matching.util_functions.extra_functions import get_user_lat_long
+
+# from extra_functions import get_distance
+# from extra_functions import get_match_trauma
+# from extra_functions import get_match_type
+# from extra_functions import get_user_lat_long
 
 
 def round_robin(user_zipcode, assignment, selected_hospitals, weights):
     df = selected_hospitals
-    curr_location = get_user_long_lat(user_zipcode)
+    assignment = [el.lower() for el in assignment]
+    curr_location = get_user_lat_long(user_zipcode)
 
     ## TRAUMA and TYPE (https://www.amtrauma.org/page/traumalevels)
     df['MATCH_TRAUMA'] = df.apply(lambda row: get_match_trauma(assignment, row['TRAUMA']), axis=1)
@@ -24,14 +30,40 @@ def round_robin(user_zipcode, assignment, selected_hospitals, weights):
     ## DISTANCE
     df['DISTANCE'] = df.apply(
         lambda row: get_distance(curr_location, (row['LONGITUDE'], row['LATITUDE'])), axis=1)
+    df['S_DISTANCE'] = (df['DISTANCE'] - df['DISTANCE'].min())/df['DISTANCE'].max()
+
+
+    ## BEDS as an availability
+    df['S_BEDS'] = (df['BEDS_AVAILABLE'] / df['BEDS'])
+
 
     ## Weight Distance and Number of Beds (Scaled between 0 to 100)
     df['WEIGHTED_MATCH'] = df['MATCH'] * (
-                weights['beds'] * df['BEDS'] - weights['distance'] * df['DISTANCE'] + df['DISTANCE'].max())
-    df['WEIGHTED_MATCH'] = df['WEIGHTED_MATCH'] / df['WEIGHTED_MATCH'].max() * 100
+                weights['beds'] * df['S_BEDS'] - weights['distance'] * df['S_DISTANCE'])
+    df['WEIGHTED_MATCH'] = (df['WEIGHTED_MATCH']-df['WEIGHTED_MATCH'].min()) / (df['WEIGHTED_MATCH'].max()-df['WEIGHTED_MATCH'].min()) * 100
+
+
+    ## If ventilator is non-negotiable
+    if 'ventilator' in assignment:
+        df['WEIGHTED_MATCH'] = np.where(df['VENTILATORS'] == 0, 0, df['WEIGHTED_MATCH'])
+
+
+    ## If testing kit is non-negotiable
+    if 'kit' in assignment and 'ventilator' not in assignment:
+        df['WEIGHTED_MATCH'] = np.where(df['TESTING_KITS'] == 0, 0, df['WEIGHTED_MATCH'])
+
+    ## There must be providers available
+        df['WEIGHTED_MATCH'] = np.where(df['PROVIDERS'] < 10, 0, df['WEIGHTED_MATCH'])
+
+
+    ## Rescale between 0 - 100
+    df['WEIGHTED_MATCH'] = (df['WEIGHTED_MATCH']-df['WEIGHTED_MATCH'].min()) / (df['WEIGHTED_MATCH'].max()-df['WEIGHTED_MATCH'].min()) * 100
 
     ## SORT (Criteria = MATCH, LOCATION, NUMBER OF BEDS)
-    # df.sort_values(by='WEIGHTED_MATCH', ascending = False, inplace=True)
+    # p =  df.sort_values(by='WEIGHTED_MATCH', ascending = False)
+    # print(p.head(8))
+    # p.to_csv('testoutput.csv',index=False)
+
 
     res = df[['NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
               'TELEPHONE', 'TYPE', 'TRAUMA', 'DISTANCE',
