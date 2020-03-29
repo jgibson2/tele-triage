@@ -23,7 +23,7 @@ class ResponseModel:
 
     def build(self, uuid, logger=None):
         self.actions.append((Actions.stop,))
-        return UserModel(uuid, self.actions, logger) if uuid is not None else None
+        return UserModel(uuid, self.actions.copy(), logger) if uuid is not None else None
 
 
 class UserModel:
@@ -83,6 +83,7 @@ class UserModelRepository:
 
     def delete(self, uuid):
         if uuid in self.users:
+            self.users[uuid] = None
             del self.users[uuid]
 
     def get_response(self, uuid, message):

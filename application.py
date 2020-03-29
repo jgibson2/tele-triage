@@ -53,6 +53,8 @@ def sms():
     message_body = request.values.get('Body', None).strip()
     if message_body.upper() == 'RESTART':
         user_model_repo.delete(phone_number)
+        resp = MessagingResponse()
+        resp.message("Let's start over.")
     resp = MessagingResponse()
     response, cont = user_model_repo.get_response(phone_number, message_body)
     resp.message(response)
