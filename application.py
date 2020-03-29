@@ -1,3 +1,5 @@
+import re
+
 import models, logging, yaml, enum, parsers, collections, threading, time, triage, matching.match_users
 from flask import Flask, make_response, render_template, redirect, url_for, request, session
 from twilio.rest import Client
@@ -92,7 +94,7 @@ def get_triage_instructions(triage_code):
     if triage_code == 'home':
         triage_instructions = "Stay at home, rest, and take medication as necessary"
         return triage_instructions, False
-    elif triage_code == 'triage1' or triage_code == 'triage2' or triage_code == 'triage3' or triage_code == 'triage4':
+    elif re.match(r'LEVEL \d+', triage_code):
         triage_instructions = "Go to the ER ASAP"
         return triage_instructions, True
     elif triage_code == 'gettest':
@@ -116,7 +118,7 @@ def create_api_query_worker_thread():
                             instructions = user.values['triage_instructions']
                             if user.values['get_hospital']:
                                 user_zip_code = user.values['zip_code']
-                                hospitals = triage.get_hospital_records_in_zip_codes(all_zip_codes)
+                                hospitals = triage.get_hospital_records_within_distance(user_zip_code, zip_code_radius)
                                 weights = matching.match_users.get_match_weights(user_zip_code, user.values['triage_code'],
                                                                                  hospitals)
                                 selected_hospitals = triage.make_hospital_choice(hospitals, weights)
