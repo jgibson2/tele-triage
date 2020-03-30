@@ -5,162 +5,162 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sequoia</title>
-    <link rel="stylesheet" type="text/css" href="sequoiastyle.css">
 	<style>
-		html {
-			background-color: rgb(0,0,0);
-			background-image: url('https://i.ibb.co/4dn7RSY/sequoia-transparent.png');
-			background-repeat: no-repeat;
-			background-position: right bottom;
-			background-size: 28% 80%;
-		}
+    html {
+      color: black;
+    }
 
-		body {
-			text-align: center;
-		}
+    body {
+      text-align: center;
+    }
 
-		#header {
-			background-color: rgb(0,0,0);
-			padding: 10px;
-		}
+    #header {
+      padding: 10px;
+    }
 
-		h1, h2, h3, h4, h5, h6, p {
-			font-family: sans-serif;
-		}
+    h1, h2, h3, h4, h5, h6, p {
+      font-family: sans-serif;
+    }
 
-		form {
-			font-family: sans-serif;
-		}
+    form {
+      font-family: sans-serif;
+    }
 
-		#subtitle, #instructions {
-			color: rgb(230,230,230);
-		}
+    /* Buttons */
+    button {
+      font-size: 100%;
+        background: rgb(230,230,230);
+        width: 23%;
+        padding: 10px;
+        border-radius: 25px;
+    }
 
-		b {
-			color: rgb(255,255,255);
-		}
+    button:hover, button:hover:focus {
+        background: black;
+        color: white;
+        cursor: pointer;
+    }   
 
-		/* Submit button */
-		input[type=submit] {
-			font-size: 100%;
-		    background: rgb(230,230,230);
-		    color: rgb(0,0,0);
-		    width: 100%;
-		    padding: 10px;
-		}
+    /* Submit button */
+    input[type=submit] {
+      font-size: 100%;
+        background: rgb(230,230,230);
+        color: rgb(0,0,0);
+        width: 80%;
+        padding: 10px;
+        border-radius: 25px;
+    }
 
-		input[type=submit]:hover, [type=submit]:hover:focus {
-		    background: rgb(35,192,133);
-		    color: rgb(255,255,255);
-		    cursor: pointer;
-		}
+    input[type=submit]:hover, [type=submit]:hover:focus {
+        background: black;
+        color: white;
+        cursor: pointer;
+    }
 
-		/* Radio buttons */
-		.container {
-		  text-align: left;
-		  display: block;
-		  position: relative;
-		  padding-left: 35px;
-		  margin-bottom: 12px;
-		  cursor: pointer;
-		  font-size: 18px;
-		  -webkit-user-select: none;
-		  -moz-user-select: none;
-		  -ms-user-select: none;
-		  user-select: none;
-		  color: rgb(230,230,230);
-		}
+    /* Radio buttons */
+    .container {
+      text-align: left;
+      display: block;
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      font-size: 18px;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      color: black;
+    }
 
-		.container input {
-		  position: absolute;
-		  opacity: 0;
-		  cursor: pointer;
-		}
+    .container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
 
-		.checkmark {
-		  position: absolute;
-		  top: 0;
-		  left: 0;
-		  height: 25px;
-		  width: 25px;
-		  background-color: rgb(126,126,126);
-		  border-radius: 50%;
-		}
+    .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 25px;
+      width: 25px;
+      background-color: rgb(126,126,126);
+      border-radius: 50%;
+    }
 
-		/* Hover --> make grey */
-		.container:hover input ~ .checkmark {
-		  background-color: #ccc;
-		}
+    /* Hover --> make grey */
+    .container:hover input ~ .checkmark {
+      background-color: #ccc;
+    }
 
-		/* Click --> make green */
-		.container input:checked ~ .checkmark {
-		  background-color: rgb(35,192,133);
-		}
+    /* Click --> make green */
+    .container input:checked ~ .checkmark {
+      background-color: rgb(124,220,215);
+    }
 
-		/* Checkmark dot */
-		.checkmark:after {
-		  content: "";
-		  position: absolute;
-		  display: none;
-		}
+    /* Checkmark dot */
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
 
-		/* Show checkmark dot */
-		.container input:checked ~ .checkmark:after {
-		  display: block;
-		}
+    /* Show checkmark dot */
+    .container input:checked ~ .checkmark:after {
+      display: block;
+    }
 
-		/* Default styling */
-		.container .checkmark:after {
-		 	top: 9px;
-			left: 9px;
-			width: 8px;
-			height: 8px;
-			border-radius: 50%;
-			background: white;
-		}
+    /* Default styling */
+    .container .checkmark:after {
+      top: 9px;
+      left: 9px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+    }
 
-		/* Columns */
-		.column {
-		  float: left;
-		  padding: 20px;
-		}
+    /* Columns */
+    .column {
+      float: left;
+      padding: 20px;
+    }
 
-		.left {
-		  width: 70%;
-		}
+    .left {
+      width: 65%;
+    }
 
-		.right {
-		  width: 23%;
-		  color: rgb(230,230,230);
-		}
+    .right {
+      width: 28%;
+    }
 
-		.row:after {
-		  content: "";
-		  display: table;
-		  clear: both;
-		}
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
 
-		/* User Information Box */
-		#box {
-			margin: auto;
-			width: 97%;
-			padding: 10px;
-			background: rgba(255,255,255,0.3);
-		}
+    /* User Information Box */
+    #box {
+      margin: auto;
+      width: 97%;
+      padding: 10px;
+      background: rgb(255,255,255);
+    }
 
-		#border {
-			margin: auto;
-			width: 90%;
-			padding: 10px;
-			background-color: rgba(255,255,255,0.2);
-			background: linear-gradient(135deg, rgba(230,187,230,0.5) 0%, rgba(167,230,193,0.5) 100%);
-		}
-	</style>
+    #border {
+      margin: auto;
+      width: 90%;
+      padding: 5px;
+      background: black;
+    }
+  </style>
 </head>
 <body>
-	<div id = "header">
-		<a href = "/"><img src="https://i.ibb.co/qy2CCy0/sequoia-logo.png" alt="Sequoia Logo" height="75"></a>
-	</div>
+  <div id = "header">
+    <a href = "/"><img src="https://i.ibb.co/tPctv7C/sequoia-logo.png" alt="Sequoia Logo" height="75"></a>
+  </div>
 	<div id = "subtitle">
 		<h2>Sending Emergency Queries Utilizing Online Interactive Aid</h2>
 	</div>
