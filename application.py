@@ -31,21 +31,26 @@ zip_code_radius = int(credentials['zipcodeapi']['radius_km'])
 
 client = Client(twilio_acct_sid, twilio_token)
 
-# Not needed?
-# Triages = enum.Enum('Triages', ['requeue'])
-
 @application.route('/')
 def home():
+    return render_template('index.html')
+
+@application.route('/resources')
+def resources():
+    return render_template('resources.html')
+    
+@application.route('/triage')
+def triaging():
     if len(user_queue) > 0 or ('user_uuid' in session and session['user_uuid'] != None):
         if 'user_uuid' not in session or session['user_uuid'] == None:
             user = user_queue.popleft()
             session['user_uuid'] = user.uuid
             session['user_vals'] = user.values
         # display phone number, values, and triage options (including exit, re-queuing user)
-        return render_template('index.html', values=session['user_vals'], phonenumber=session['user_uuid'])
+        return render_template('triage.html', values=session['user_vals'], phonenumber=session['user_uuid'])
     else:
         # todo: continuously check every few seconds
-        return render_template('no_users_index.html')
+        return render_template('no_users_triage.html')
 
 
 @application.route('/sms', methods=['POST'])
