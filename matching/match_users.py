@@ -17,7 +17,7 @@ from matching.util_functions.extra_functions import convert_json_to_df
 # sys.path.insert(0,'../test_assets/')
 # import test_assets
 
-def get_match_weights(user_zipcode, assignment, selected_hospitals, weights={'beds':0.2, 'distance':0.8,'level': 1}):
+def get_match_weights(user_zipcode, assignment, selected_hospitals, weights={'beds':0.2, 'beds_available': 10,'distance':0.8,'level': 1}):
     df = convert_json_to_df(selected_hospitals)
     round_robin_results = round_robin(user_zipcode, assignment, df, weights)
     res = list(round_robin_results['WEIGHTED_MATCH'])
@@ -41,6 +41,7 @@ def test_match_users():
     assignment = ['Level 1','Pediatric','Children', 'ventilator', 'kit']
     weights = {
         'beds':0.5,
+        'beds_available': 10,
         'distance': 0.5,
     }
     get_match_weights(user_zipcode, assignment, selected_hospitals, weights)
@@ -49,6 +50,7 @@ def test_match_users():
     assignment = ['Level 2','Pediatric','Trauma','kit']
     weights = {
         'beds': 0.3,
+        'beds_available': 5,
         'distance': 0.7,
     }
     get_match_weights(user_zipcode, assignment, selected_hospitals, weights)
