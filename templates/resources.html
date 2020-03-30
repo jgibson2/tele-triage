@@ -7,7 +7,8 @@
     <title>Sequoia</title>
 	<style>
     html {
-      color: black;
+      background: rgb(3,25,43);
+      color: white
     }
 
     body {
@@ -16,6 +17,7 @@
 
     #header {
       padding: 10px;
+      background: linear-gradient(to bottom, rgb(38,47,62) 0%, rgb(3,25,43) 100%);
     }
 
     h1, h2, h3, h4, h5, h6, p {
@@ -29,30 +31,36 @@
     /* Buttons */
     button {
       font-size: 100%;
-        background: rgb(230,230,230);
+        background: rgb(20,49,69);
         width: 23%;
         padding: 10px;
-        border-radius: 25px;
+        border-color: white;
+        border: 1.5px solid white;
+        border-width: 0.2px;
+        border-radius: 10px;
+        color: white;
     }
 
     button:hover, button:hover:focus {
-        background: black;
+        background: rgb(52,128,179);
         color: white;
         cursor: pointer;
     }   
 
     /* Submit button */
     input[type=submit] {
-      font-size: 100%;
-        background: rgb(230,230,230);
-        color: rgb(0,0,0);
+        font-size: 100%;
+        background: rgb(20,49,69);
+        border: 1.5px solid white;
+        border-radius: 10px;
+        color: white;
         width: 80%;
         padding: 10px;
         border-radius: 25px;
     }
 
     input[type=submit]:hover, [type=submit]:hover:focus {
-        background: black;
+        background: rgb(52,128,179);
         color: white;
         cursor: pointer;
     }
@@ -70,7 +78,7 @@
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
-      color: black;
+      color: white;
     }
 
     .container input {
@@ -85,18 +93,18 @@
       left: 0;
       height: 25px;
       width: 25px;
-      background-color: rgb(126,126,126);
+      background-color: rgb(20,49,69);
       border-radius: 50%;
     }
 
     /* Hover --> make grey */
     .container:hover input ~ .checkmark {
-      background-color: #ccc;
+      background-color: rgb(52,128,179);
     }
 
     /* Click --> make green */
     .container input:checked ~ .checkmark {
-      background-color: rgb(124,220,215);
+      background-color: rgb(153,197,225);
     }
 
     /* Checkmark dot */
@@ -146,21 +154,24 @@
       margin: auto;
       width: 97%;
       padding: 10px;
-      background: rgb(255,255,255);
+      background: rgb(6,28,45);
+      border-color: white;
+      border-radius: 10px;
     }
 
     #border {
       margin: auto;
       width: 90%;
-      padding: 5px;
-      background: black;
+      padding: 1px;
+      background: white;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-	<div id = "header">
-		<a href = "/"><img src="https://i.ibb.co/tPctv7C/sequoia-logo.png" alt="Sequoia Logo" height="75"></a>
-	</div>
+  <div id = "header">
+    <a href = "/"><img src="https://i.ibb.co/mvwDQ12/sequoia-logo.png" alt="Sequoia Logo" height="75"></a>
+  </div>
 	<div id = "subtitle">
 		<h2>Sending Emergency Queries Utilizing Online Interactive Aid</h2>
 	</div>
