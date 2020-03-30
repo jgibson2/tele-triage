@@ -18,6 +18,7 @@ from matching.util_functions.extra_functions import get_user_long_lat
 
 
 def round_robin(user_zipcode, assignment, selected_hospitals, weights):
+    '''assignments in LEVEL 1, LEVEL 2, LEVEL 3, LEVEL 4'''
     df = selected_hospitals
     assignment = [el.lower() for el in assignment]
     curr_location = get_user_long_lat(user_zipcode)
@@ -44,12 +45,12 @@ def round_robin(user_zipcode, assignment, selected_hospitals, weights):
 
 
     ## If ventilator is non-negotiable
-    if 'ventilator' in assignment:
+    if 'VENTILATORS' in df.columns:
         df['WEIGHTED_MATCH'] = np.where(df['VENTILATORS'] == 0, 0, df['WEIGHTED_MATCH'])
 
 
     ## If testing kit is non-negotiable
-    if 'kit' in assignment and 'ventilator' not in assignment:
+    if 'KITS' in df.columns and 'VENTILATORS' not in df.columns:
         df['WEIGHTED_MATCH'] = np.where(df['TESTING_KITS'] == 0, 0, df['WEIGHTED_MATCH'])
 
     ## There must be providers available
