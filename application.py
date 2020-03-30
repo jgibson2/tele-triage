@@ -95,22 +95,22 @@ def verdict():
 
 
 def get_triage_instructions(triage_code):
-    # TODO: make triage codes conform to levels of care in matching, and expand on these options
-    if triage_code == 'home':
-        triage_instructions = "Stay at home, rest, and take medication as necessary"
-        return triage_instructions, False
-    elif re.match(r'LEVEL \d+', triage_code):
-        triage_instructions = "Go to the ER ASAP"
-        return triage_instructions, True
-    elif triage_code == 'gettest':
-        triage_instructions = "You should be tested for COVID-19 at the nearest testing location", False
-        return triage_instructions, False
-    elif triage_code == 'checkinlater8' or triage_code == 'checkinlater16' or triage_code == 'checkinlater24':
-        triage_instructions = "Please stay put and text back in 8 hours"
-        return triage_instructions, False 
+    # TODO: improve response messages
+    triage_responses = {
+        "home": ("Stay at home, rest, and take medication as necessary", False),
+        "LEVEL 1": ("Please seek Triage Level 1 assistance; you will be provided with a list of nearby hospitals/clinics:", True),
+        "LEVEL 2": ("Please seek Triage Level 2 assistance; you will be provided with a list of nearby hospitals/clinics:", True),
+        "LEVEL 3": ("Please seek Triage Level 3 assistance; you will be provided with a list of nearby hospitals/clinics:", True),
+        "LEVEL 4": ("Please seek Triage Level 4 assistance; you will be provided with a list of nearby hospitals/clinics:", True),
+        "gettest": ("Please get tested for COVID-19; you will be provided with a list of nearby testing locations:", False),
+        "checkinlater8": ("Please stay put and text back in 8 hours", False),
+        "checkinlater16": ("Please stay put and text back in 16 hours", False),
+        "checkinlater24": ("Please stay put and text back in 24 hours", False),
+    }
+    if triage_code in triage_responses:
+        return triage_responses[triage_code]
     else:
         return None, None
-
 
 def create_api_query_worker_thread():
     def do_work():
