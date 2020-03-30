@@ -18,7 +18,6 @@ from matching.util_functions.extra_functions import get_user_long_lat
 
 
 def round_robin(user_zipcode, assignment, selected_hospitals, weights):
-    '''assignments in LEVEL 1, LEVEL 2, LEVEL 3, LEVEL 4'''
     df = selected_hospitals
     assignment = [el.lower() for el in assignment]
     curr_location = get_user_long_lat(user_zipcode)
@@ -35,25 +34,26 @@ def round_robin(user_zipcode, assignment, selected_hospitals, weights):
 
 
     ## BEDS as an availability
-    df['S_BEDS'] = (df['BEDS_AVAILABLE'] / df['BEDS'])
+    df['S_BEDS'] = (df.get('BEDS_AVAILABLE',0) / df['BEDS'])
 
 
     ## Weight Distance and Number of Beds (Scaled between 0 to 100)
     df['WEIGHTED_MATCH'] = df['MATCH'] * (
-                weights['beds'] * df['S_BEDS'] - weights['distance'] * df['S_DISTANCE'])
+                weights['beds'] * df['BEDS'] + weights['beds_available'] * df['S_BEDS'] - weights['distance'] * df['S_DISTANCE'])
     df['WEIGHTED_MATCH'] = (df['WEIGHTED_MATCH']-df['WEIGHTED_MATCH'].min()) / (df['WEIGHTED_MATCH'].max()-df['WEIGHTED_MATCH'].min()) * 100
 
-
-    ## If ventilator is non-negotiable
+    # # ## If ventilator is non-negotiable
     if 'VENTILATORS' in df.columns:
-        df['WEIGHTED_MATCH'] = np.where(df['VENTILATORS'] == 0, 0, df['WEIGHTED_MATCH'])
+        if 'ventilators' in assignment:
+            df['WEIGHTED_MATCH'] = np.where(df['VENTILATORS'] == 0, 0, df['WEIGHTED_MATCH'])
 
+    # # ## If testing kit is non-negotiable
+    if 'TESTING_KITS' in df.columns:
+        if 'kits' in assignment and 'ventilators' not in assignment:
+            df['WEIGHTED_MATCH'] = np.where(df['TESTING_KITS'] == 0, 0, df['WEIGHTED_MATCH'])
 
-    ## If testing kit is non-negotiable
-    if 'KITS' in df.columns and 'VENTILATORS' not in df.columns:
-        df['WEIGHTED_MATCH'] = np.where(df['TESTING_KITS'] == 0, 0, df['WEIGHTED_MATCH'])
-
-    ## There must be providers available
+    # # ## There must be providers available
+    if 'PROVIDERS' in df.columns:
         df['WEIGHTED_MATCH'] = np.where(df['PROVIDERS'] < 10, 0, df['WEIGHTED_MATCH'])
 
 
