@@ -105,7 +105,7 @@ def get_triage_instructions(triage_code):
     elif triage_code == 'gettest':
         triage_instructions = "You should be tested for COVID-19 at the nearest testing location", False
         return triage_instructions, False
-    elif triage_code == 'checkinlater':
+    elif triage_code == 'checkinlater8' or triage_code == 'checkinlater16' or triage_code == 'checkinlater24':
         triage_instructions = "Please stay put and text back in 8 hours"
         return triage_instructions, False 
     else:
