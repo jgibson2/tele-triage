@@ -51,7 +51,7 @@ def get_match_type(assignment, visit_type):
             return 1
     return 0
 
-def get_user_lat_long(user_zipcode):
+def get_user_long_lat(user_zipcode):
     url = 'https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-zip-code-latitude-and-longitude&q={user_zipcode}&facet=state&facet=timezone&facet=dst'.format(user_zipcode=user_zipcode)
     response = requests.get(url)
     

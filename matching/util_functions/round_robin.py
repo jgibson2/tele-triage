@@ -9,18 +9,18 @@ import pprint
 from matching.util_functions.extra_functions import get_distance
 from matching.util_functions.extra_functions import get_match_trauma
 from matching.util_functions.extra_functions import get_match_type
-from matching.util_functions.extra_functions import get_user_lat_long
+from matching.util_functions.extra_functions import get_user_long_lat
 
 # from extra_functions import get_distance
 # from extra_functions import get_match_trauma
 # from extra_functions import get_match_type
-# from extra_functions import get_user_lat_long
+# from extra_functions import get_user_long_lat
 
 
 def round_robin(user_zipcode, assignment, selected_hospitals, weights):
     df = selected_hospitals
     assignment = [el.lower() for el in assignment]
-    curr_location = get_user_lat_long(user_zipcode)
+    curr_location = get_user_long_lat(user_zipcode)
 
     ## TRAUMA and TYPE (https://www.amtrauma.org/page/traumalevels)
     df['MATCH_TRAUMA'] = df.apply(lambda row: get_match_trauma(assignment, row['TRAUMA']), axis=1)
