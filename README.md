@@ -6,10 +6,11 @@ Sequoia is an SMS-based platform made to help hospitals handle the burden of exp
 
 # Navigating this repo
 * deliverables: writeup, slides, and video demo
-// TODO - list folders, summarize contents
+* // TODO - list folders, summarize contents
 
 # How to use Sequoia
 User: Text HELLO to 618-643-9906
+
 Provider: After a user submits a triage request, triage users here: http://159.89.236.70/
 
 # Problem overview
@@ -44,16 +45,18 @@ Speed and flexibility
 
 # Use cases
 Intra-system Use:
+
 Individual health systems can use Sequoia to efficiently direct patients between existing care facilities within a single health system. This would minimize crowding emergency departments or overwhelming phone lines. Even outside a pandemic setting, intra-system use would ameliorate health care conditions during a localized crisis as health providers within a health system can coordinate reduce overloading of a single health care facility during a crisis.
 
 Inter-system Use:
+
 In a situation where a pandemic or other crisis is so severe that individual health systems cannot handle the massive patient influx on their own, multiple health systems using Sequoia's basic framework can connect their platforms and combine their provider bases, lists of care facility options, and available care facility data. This would allow users in need to receive an expanded list of care facilities, and patient influx could be efficiently distributed between multiple health care systems.
 
 # How it's built
 * The Sequoia platform utilizes Twilio for programmatic SMS and Flask / waitress for a web server, running on a DigitalOcean droplet. To support large volumes of users, Sequoia uses a queue-based system to match a specific provider with a user to triage, and a secondary producer-consumer thread system for off-main-thread querying of web-based GeoJSON APIs. In addition, Sequoia uses an extensible and adaptable weighting system to match each user with a health care center, based on available resources, distance, and care level.
 * Data about hospital locations and triage levels come from CMS (Centers for Medicare & Medicaid Services)
 * User symptom questionnaire was derived from the Washington University in St. Louis daily self-screening questionnaire for employees.
-// TODO Add relevant technical details here
+* // TODO Add relevant technical details here
 
 # Next Steps
 Further Design and Testing:
@@ -77,14 +80,14 @@ Implementation Notes:
 * Sequoia bypasses the need for FDA Class II clearance as a diagnostic by letting a trained, human provider make the triage decision.
 
 # More information
-Devpost page: https://devpost.com/software/sequoia-tgnryh
-COVID-19 Global Hackathon (featured as winning project): https://covidglobalhackathon.com/
+* Devpost page: https://devpost.com/software/sequoia-tgnryh
+* COVID-19 Global Hackathon (featured as winning project): https://covidglobalhackathon.com/
 
 # Created by
 Undergraduate, graduate, and medical school students at Washington University in St. Louis and Washington University School of Medicine:
-John Gibson (Computer Science)
-Rohit Kumar (Computer Science)
-Ashwin Leo (School of Medicine)
-Kevin Li (Computer Science, Biomedical Engineering)
-Aadit Shah (Biomedical Engineering)
-Lily Xu (Biomedical Engineering, Computational Biology)
+* John Gibson (Computer Science)
+* Rohit Kumar (Computer Science)
+* Ashwin Leo (School of Medicine)
+* Kevin Li (Computer Science, Biomedical Engineering)
+* Aadit Shah (Biomedical Engineering)
+* Lily Xu (Biomedical Engineering, Computational Biology)
