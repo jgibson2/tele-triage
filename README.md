@@ -65,7 +65,7 @@ Further Design and Testing:
 
 (2) Risk minimization discussions with government and public health agencies. Prior to deployment, we want to de-risk mis-triaging by verifying that the user questionnaire will give providers the necessary information to make an effective triage decision. We will use this information - along with verification of weightings of static factors present in CMS, data from other public databases, and real-time data on resource availability - to refine our matching algorithm that sends a list of appropriate care centers back to the users.
 
-Resources Needed:
+*Resources Needed:*
 
 (1) Seeking assistance and input from those with legal expertise on electronically transmitting medical information.
 
@@ -73,18 +73,16 @@ Resources Needed:
 
 (3) Seeking access to governmental groups outside of Missouri to better understand the scalability of Sequoia on a state-based or national level.
 
-Implementation:
+*Implementation:*
+
 (1) Legal and clinical verification.
 
 (2) Interfacing with two primary players: hospital systems/academic centers and government/public health systems.
-     
-     (A) Complete a beta-prototype for IRB approval.
-     
-     (B) Pilot Sequoia in a single locale to test efficacy.
-     
-     (C) Reach out to county and state municipality public health organizations.
+     * (A) Complete a beta-prototype for IRB approval.
+     * (B) Pilot Sequoia in a single locale to test efficacy.
+     * (C) Reach out to county and state municipality public health organizations.
 
-Implementation Notes:
+*Implementation Notes:*
 * Projected costs are minimal and only stem from server usage. Sequoia will be provided to users at no cost.
 * Sequoia bypasses the need for FDA Class II clearance as a diagnostic by letting a trained, human provider make the triage decision.
 
