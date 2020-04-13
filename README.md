@@ -60,19 +60,28 @@ In a situation where a pandemic or other crisis is so severe that individual hea
 
 # Next Steps
 Further Design and Testing:
+
 (1) Verification of compliance with HIPAA and PHI standards to receive user information and to allow health providers to legally triage within a single health system and between multiple health systems.
+
 (2) Risk minimization discussions with government and public health agencies. Prior to deployment, we want to de-risk mis-triaging by verifying that the user questionnaire will give providers the necessary information to make an effective triage decision. We will use this information - along with verification of weightings of static factors present in CMS, data from other public databases, and real-time data on resource availability - to refine our matching algorithm that sends a list of appropriate care centers back to the users.
 
 Resources Needed:
+
 (1) Seeking assistance and input from those with legal expertise on electronically transmitting medical information.
+
 (2) Seeking assistance and input from those with government and/or health care agency expertise.
+
 (3) Seeking access to governmental groups outside of Missouri to better understand the scalability of Sequoia on a state-based or national level.
 
 Implementation:
 (1) Legal and clinical verification.
+
 (2) Interfacing with two primary players: hospital systems/academic centers and government/public health systems.
+     
      (A) Complete a beta-prototype for IRB approval.
+     
      (B) Pilot Sequoia in a single locale to test efficacy.
+     
      (C) Reach out to county and state municipality public health organizations.
 
 Implementation Notes:
