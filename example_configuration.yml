@@ -1,0 +1,14 @@
+twilio:
+  acct_sid: <Account SID here>
+  token: <auth token here>
+  number: +15555555555
+  msg_service_sid: <twilio message service sid>
+flask:
+  secret_key: <Randomly generated 10 character string w uppercase, lowercase, digits>
+  host: localhost
+  port: 5000
+  debug: false
+zipcodeapi:
+  # api_key: <zipcode api key>
+  radius_km: 50
+
