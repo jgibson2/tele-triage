@@ -179,16 +179,18 @@
 		<h3>Left: Review user information | Right: Select appropriate triage location</h3>
 	</div>
     <div class="row">
-	    <div class="column left">
-	  	<div id="border">
-            <div id="box">
+      <div class="column left">
+        <div id="border">
+          <div id="box">
                 <h2>User Texts:</h2>
-		{% for key,val in values.items()%}
-        	<p>{{key}}: {{val}}</p>
-        {% endfor %}
-          <p>Phone number: {{phonenumber}}</p>
+                {% for key,val in values.items()%}
+                  {% if key != 'zip_code' %}
+                    <p>{{key}}: {{val}}</p>
+                  {% endif %}
+                {% endfor %}
+                <p>Phone number: {{phonenumber}}</p>
             </div>
-	    </div>
+        </div>
     </div>
 	    <div class="column right">
 	  	    <h2>Triage Options</h2>
